@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fechaVuelta.setDate(fechaVuelta.getDate() + 7);
 
         const fmt = (d) => d.toISOString().split('T')[0];
-        // Formato Google Flights deep link
-        return `https://www.google.com/travel/flights?hl=es&curr=USD#flt=${origen}.${destino}.${fmt(fechaIda)}*${destino}.${origen}.${fmt(fechaVuelta)};c:USD;e:1;sd:1;t:f`;
+        // Google Flights deep link - t:r = round trip, sin filtro de escalas
+        return `https://www.google.com/travel/flights?hl=es&curr=USD#flt=${origen}.${destino}.${fmt(fechaIda)}*${destino}.${origen}.${fmt(fechaVuelta)};c:USD;sd:1;t:r`;
     };
 
     // Interpretar Estado (Barato, Caro, Normal)
