@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Flights - Premium Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <i class="fa-solid fa-plane-departure icon-glow"></i>
+                <span>Aero<span class="highlight">Track</span></span>
+            </div>
+            <div class="header-actions">
+                <div class="api-status" id="api-status-badge">
+                    <span class="status-dot"></span>
+                    <span id="api-status-text">Conectando...</span>
+                </div>
+                <div class="avatar">
+                    <img src="https://ui-avatars.com/api/?name=User&background=random" alt="Avatar">
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Search / Filter Area (Visual) -->
+            <section class="search-section glass-panel">
+                <div class="search-inputs">
+                    <div class="input-group">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <input type="text" placeholder="Origen" value="Cualquier origen" readonly>
+                    </div>
+                    <div class="divider"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <input type="text" placeholder="Destino" value="Cualquier destino" readonly>
+                    </div>
+                </div>
+                <button id="refresh-btn" class="btn-primary">
+                    <i class="fa-solid fa-rotate-right"></i> Actualizar Rutas
+                </button>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section">
+                <div class="section-header">
+                    <h2>Rutas Monitoreadas</h2>
+                    <p>Precios obtenidos en tiempo real de tu API.</p>
+                </div>
+
+                <div class="flights-header">
+                    <div class="col-route">Ruta</div>
+                    <div class="col-price">Precio Actual</div>
+                    <div class="col-average">Precio Promedio</div>
+                    <div class="col-status">Estado</div>
+                </div>
+
+                <div id="flights-container" class="flights-list">
+                    <!-- Los vuelos se generarán aquí mediante JS -->
+                    <div class="loading-state">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        <p>Cargando información de rutas...</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Template for a flight card -->
+    <template id="flight-card-template">
+        <div class="flight-card glass-panel bounce-in">
+            <div class="col-route">
+                <div class="route-airports">
+                    <span class="airport-code origin">XXX</span>
+                    <div class="route-line">
+                        <div class="line"></div>
+                        <i class="fa-solid fa-plane"></i>
+                        <div class="line"></div>
+                    </div>
+                    <span class="airport-code destination">YYY</span>
+                </div>
+                <span class="route-name city-names">Ciudad A → Ciudad B</span>
+            </div>
+            
+            <div class="col-price">
+                <span class="current-price price-tag">$0</span>
+            </div>
+            
+            <div class="col-average">
+                <span class="average-price">$0</span>
+            </div>
+            
+            <div class="col-status">
+                <div class="status-badge">
+                    <span class="status-text">Normal</span>
+                </div>
+                <div class="price-bar-container">
+                    <div class="price-indicator"></div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="app.js"></script>
+</body>
+</html>
