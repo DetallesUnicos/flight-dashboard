@@ -1,127 +1,130 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Configuración API
     const API_URL = 'https://TU-WORKER.workers.dev';
-    
-    const refreshBtn = document.getElementById('refresh-btn');
-    const flightsContainer = document.getElementById('flights-container');
-    const apiStatusDot = document.querySelector('.status-dot');
-    const apiStatusText = document.getElementById('api-status-text');
-    const template = document.getElementById('flight-card-template');
 
-    // Datos simulados para usar como fallback si la API no devuelve la estructura esperada o falla
-    const mockFlightsData = [
-        { origin: 'BOG', dest: 'MAD', originCity: 'Bogotá', destCity: 'Madrid', currentPrice: 520, avgPrice: 650 },
-        { origin: 'MEX', dest: 'CUN', originCity: 'Ciudad de México', destCity: 'Cancún', currentPrice: 120, avgPrice: 115 },
-        { origin: 'EZE', dest: 'MIA', originCity: 'Buenos Aires', destCity: 'Miami', currentPrice: 890, avgPrice: 750 },
-        { origin: 'SCL', dest: 'LIM', originCity: 'Santiago', destCity: 'Lima', currentPrice: 150, avgPrice: 200 }
-    ];
+    // Elementos del DOM
+    const btnRefresh = document.getElementById('btn-refresh');
+    const tableBody = document.getElementById('table-body');
+    const rowTemplate = document.getElementById('row-template');
+    const tableContainer = document.querySelector('.table-container');
+    const errorContainer = document.getElementById('error-container');
+    const btnRetry = document.getElementById('btn-retry');
+    const errorMessage = document.getElementById('error-message');
 
-    // Calcula el "estado" del ticket comparándolo contra el promedio (estilo Google Flights)
-    function calculateStatus(current, avg) {
-        const ratio = current / avg;
-        if (ratio <= 0.85) return { class: 'status-good', text: 'Buen Precio' };
-        if (ratio >= 1.15) return { class: 'status-high', text: 'Precio Alto' };
-        return { class: 'status-typical', text: 'Típico' };
-    }
-
-    // Formateador de moneda
-    const formatMoney = (amount) => {
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
+    // Inicializar formato de moneda basado en locales
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('es-CL', { 
+            style: 'currency', 
+            currency: 'CLP',
+            maximumFractionDigits: 0
+        }).format(value);
     };
 
-    function renderFlights(flights) {
-        flightsContainer.innerHTML = '';
+    // Función para asignar colores basado en texto
+    const getStatusClass = (text) => {
+        const textLower = text.toLowerCase();
+        if (textLower.includes('barato')) return 'barato';
+        if (textLower.includes('caro')) return 'caro';
+        if (textLower.includes('normal') || textLower.includes('promedio')) return 'normal';
+        return 'default';
+    };
+
+    const getSignalClass = (text) => {
+        const textLower = text.toLowerCase();
+        if (textLower.includes('comprar')) return 'comprar';
+        if (textLower.includes('esperar')) return 'esperar';
+        return 'default';
+    };
+
+    // Renderizar una fila a partir del template
+    const createFlightRow = (flight) => {
+        const clone = rowTemplate.content.cloneNode(true);
         
-        if (!flights || flights.length === 0) {
-            flightsContainer.innerHTML = '<div class="loading-state"><p>No se encontraron vuelos.</p></div>';
-            return;
-        }
-
-        flights.forEach((flight, index) => {
-            // Clonar el template
-            const clone = template.content.cloneNode(true);
-            const card = clone.querySelector('.flight-card');
-            
-            // Efecto rítmico en animación de entrada
-            card.style.animationDelay = `${index * 0.1}s`;
-
-            // Establecer valores
-            clone.querySelector('.origin').textContent = flight.origin;
-            clone.querySelector('.destination').textContent = flight.dest;
-            clone.querySelector('.city-names').textContent = `${flight.originCity} → ${flight.destCity}`;
-            
-            clone.querySelector('.current-price').textContent = formatMoney(flight.currentPrice);
-            clone.querySelector('.average-price').textContent = formatMoney(flight.avgPrice);
-
-            // Ajustar estado visual
-            const status = calculateStatus(flight.currentPrice, flight.avgPrice);
-            card.classList.add(status.class);
-            clone.querySelector('.status-text').textContent = status.text;
-
-            flightsContainer.appendChild(clone);
-        });
-    }
-
-    async function fetchFlights() {
-        // Estado cargando
-        const originalBtnText = refreshBtn.innerHTML;
-        refreshBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cargando...';
-        refreshBtn.disabled = true;
+        // Asignar Texto
+        clone.querySelector('.ruta-badge').textContent = flight.ruta;
+        clone.querySelector('.current-price').textContent = formatCurrency(flight.precio);
+        clone.querySelector('.average-price').textContent = formatCurrency(flight.promedio);
         
-        apiStatusDot.className = 'status-dot'; // Reset class
-        apiStatusText.textContent = 'Actualizando...';
+        const estadoBadge = clone.querySelector('.badge-estado');
+        estadoBadge.textContent = flight.estado;
+        estadoBadge.classList.add(getStatusClass(flight.estado));
+
+        const senalBadge = clone.querySelector('.badge-senal');
+        senalBadge.textContent = flight.senal || flight.señal; // Cubrimos por si escriben ñ o n
+        senalBadge.classList.add(getSignalClass(flight.senal || flight.señal || ''));
+
+        return clone;
+    };
+
+    // Función principal de fetch
+    const fetchFlights = async () => {
+        // Establecer UI en modo "Carga"
+        btnRefresh.disabled = true;
+        btnRefresh.innerHTML = `
+            <div class="spinner" style="width:16px; height:16px; border-width:2px; margin-bottom:0; border-top-color:#fff;"></div>
+            <span>Actualizando...</span>
+        `;
+        
+        errorContainer.classList.add('hidden');
+        tableContainer.classList.remove('hidden');
+
+        tableBody.innerHTML = `
+            <tr id="loading-row">
+                <td colspan="5" class="status-message">
+                    <div class="spinner"></div>
+                    <div>Cargando vuelos actualizados...</div>
+                </td>
+            </tr>
+        `;
 
         try {
             const response = await fetch(API_URL);
-            
+
             if (!response.ok) {
-                throw new Error(`HTTP Error Status: ${response.status}`);
+                throw new Error(`Error en el servidor: ${response.status}`);
             }
 
-            // Status: Online
-            apiStatusDot.classList.add('online');
-            apiStatusText.textContent = 'Online';
+            const data = await response.json();
 
-            // Intentar leer la respuesta. Si el Worker devuelve los vuelos, usamos esos.
-            // De lo contrario, inyectamos los datos fallback
-            const contentType = response.headers.get("content-type");
-            let data = null;
-
-            if (contentType && contentType.indexOf("application/json") !== -1) {
-                const jsonData = await response.json();
-                // Verificamos superficialmente si es un arreglo con propiedades esperadas
-                if (Array.isArray(jsonData) && jsonData.length > 0 && jsonData[0].currentPrice !== undefined) {
-                    data = jsonData;
-                }
+            // Validar si es array válido
+            if (!Array.isArray(data) || data.length === 0) {
+                throw new Error('La API devolvió datos vacíos o en un formato incorrecto.');
             }
 
-            // Si el backend no devolvió una estructura compatible, usamos la mock data pero indicamos éxito
-            if (!data) {
-                console.warn('La API no devolvió datos con la estructura de vuelos esperada. Usando Mock Data de demostración.');
-                data = mockFlightsData.map(f => ({
-                    // Simulamos leves variaciones de precio para que la UI se vea viva al actualizar
-                    ...f,
-                    currentPrice: Math.round(f.currentPrice * (0.9 + (Math.random() * 0.2)))
-                }));
-            }
+            // Limpiar tabla (quitar spinner)
+            tableBody.innerHTML = '';
 
-            renderFlights(data);
+            // Renderizar cada vuelo, ¡Usamos SOLAMENTE datos de la API, sin falsificar!
+            data.forEach(flight => {
+                tableBody.appendChild(createFlightRow(flight));
+            });
 
         } catch (error) {
-            console.error('Error fetching from Worker:', error);
+            console.error('Error al obtener datos:', error);
             
-            // Status: Error
-            apiStatusDot.classList.add('error');
-            apiStatusText.textContent = 'Error (Usando Demo)';
-            
-            // Caemos en el fallback rendering para que el UI siga luciendo bien como demostración
-            renderFlights(mockFlightsData);
-        } finally {
-            refreshBtn.innerHTML = originalBtnText;
-            refreshBtn.disabled = false;
-        }
-    }
+            // Mostrar estado de error
+            tableContainer.classList.add('hidden');
+            errorContainer.classList.remove('hidden');
+            errorMessage.textContent = error.message === 'Failed to fetch' 
+                ? 'No se pudo conectar al Worker (Asegúrate de que permita peticiones CORS).'
+                : error.message;
 
-    // Listener y carga inicial
-    refreshBtn.addEventListener('click', fetchFlights);
+        } finally {
+            // Restaurar botón
+            btnRefresh.disabled = false;
+            btnRefresh.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path>
+                </svg>
+                <span>Actualizar precios</span>
+            `;
+        }
+    };
+
+    // Eventos
+    btnRefresh.addEventListener('click', fetchFlights);
+    btnRetry.addEventListener('click', fetchFlights);
+
+    // Carga inicial automática
     fetchFlights();
 });

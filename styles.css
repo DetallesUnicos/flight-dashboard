@@ -1,393 +1,292 @@
 :root {
-    --bg-dark: #09090b;
-    --bg-panel: rgba(24, 24, 27, 0.6);
-    --border-color: rgba(255, 255, 255, 0.08);
-    --text-primary: #f8fafc;
-    --text-secondary: #a1a1aa;
+    /* Paleta de colores inspirada en Material Design / Google Flights */
+    --bg-body: #f8f9fa;
+    --bg-surface: #ffffff;
     
-    --accent-blue: #3b82f6;
-    --accent-blue-glow: rgba(59, 130, 246, 0.3);
+    --text-primary: #202124;
+    --text-secondary: #5f6368;
     
-    --success: #22c55e;
-    --success-bg: rgba(34, 197, 94, 0.1);
+    --border-light: #dadce0;
     
-    --warning: #f59e0b;
-    --warning-bg: rgba(245, 158, 11, 0.1);
+    --primary-blue: #1a73e8;
+    --primary-blue-hover: #1b66c9;
     
-    --danger: #ef4444;
-    --danger-bg: rgba(239, 68, 68, 0.1);
+    --status-green: #1e8e3e;
+    --status-green-bg: #e6f4ea;
+    
+    --status-red: #d93025;
+    --status-red-bg: #fce8e6;
+    
+    --status-yellow: #f4b400;
+    --status-yellow-bg: #fef7e0;
+    
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'Outfit', sans-serif;
 }
 
 body {
-    background-color: var(--bg-dark);
+    font-family: var(--font-family);
+    background-color: var(--bg-body);
     color: var(--text-primary);
-    min-height: 100vh;
-    background-image: 
-        radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15), transparent 40%),
-        radial-gradient(circle at 0% 100%, rgba(139, 92, 246, 0.1), transparent 30%);
-    background-attachment: fixed;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* Glassmorphism utility */
-.glass-panel {
-    background: var(--bg-panel);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-}
-
+/* Contenedor Principal */
 .app-container {
-    max-width: 1200px;
+    max-width: 1040px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0;
 }
 
 /* Header */
-.app-header {
+.header {
+    background-color: var(--bg-surface);
+    height: 64px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    height: 80px;
-    border-bottom: 1px solid var(--border-color);
+    justify-content: space-between;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--border-light);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary-blue);
+}
+
+.header-logo h1 {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+}
+
+/* Botones */
+.btn-refresh {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--primary-blue);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 0 24px;
+    height: 40px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    font-family: var(--font-family);
+}
+
+.btn-refresh:hover {
+    background-color: var(--primary-blue-hover);
+    box-shadow: 0 1px 3px rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+}
+
+.btn-refresh:disabled {
+    background-color: var(--border-light);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Hero Section */
+.main-content {
+    padding: 32px 24px 64px;
+}
+
+.hero-section {
     margin-bottom: 32px;
 }
 
-.logo {
-    font-size: 24px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.hero-section h2 {
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
 }
 
-.logo .icon-glow {
-    color: var(--accent-blue);
-    filter: drop-shadow(0 0 8px var(--accent-blue-glow));
-}
-
-.highlight {
-    color: var(--accent-blue);
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-}
-
-.api-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    padding: 6px 12px;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-color);
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: var(--text-secondary);
-}
-
-.status-dot.online {
-    background-color: var(--success);
-    box-shadow: 0 0 8px var(--success);
-}
-
-.status-dot.error {
-    background-color: var(--danger);
-    box-shadow: 0 0 8px var(--danger);
-}
-
-.avatar img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid var(--border-color);
-}
-
-/* Search Section */
-.search-section {
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
-    gap: 20px;
-}
-
-.search-inputs {
-    display: flex;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 12px;
-    padding: 8px;
-    flex: 1;
-}
-
-.input-group {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 20px;
-    flex: 1;
-}
-
-.input-group i {
+.hero-section p {
     color: var(--text-secondary);
+    font-size: 16px;
 }
 
-.input-group input {
-    background: transparent;
-    border: none;
+/* Tabla Estilo Tarjeta */
+.table-container {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    overflow-x: auto;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+}
+
+.flights-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.flights-table th {
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-light);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.flights-table td {
+    padding: 16px 24px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 15px;
+}
+
+.flights-table tr:last-child td {
+    border-bottom: none;
+}
+
+.flight-row:hover {
+    background-color: #f8f9fa;
+}
+
+/* Elementos de la fila */
+.col-ruta .ruta-badge {
+    font-weight: 600;
     color: var(--text-primary);
     font-size: 16px;
-    width: 100%;
-    outline: none;
 }
 
-.divider {
-    color: var(--border-color);
-    padding: 0 16px;
-}
-
-.btn-primary {
-    background: var(--accent-blue);
-    color: white;
-    border: none;
-    padding: 16px 24px;
-    border-radius: 12px;
-    font-size: 16px;
+.current-price {
     font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-primary:hover {
-    background: #2563eb;
-    box-shadow: 0 0 15px var(--accent-blue-glow);
-    transform: translateY(-2px);
-}
-
-.btn-primary:active {
-    transform: translateY(0);
-}
-
-/* Results Section */
-.section-header {
-    margin-bottom: 24px;
-}
-
-.section-header h2 {
-    font-size: 28px;
-    font-weight: 600;
-}
-
-.section-header p {
-    color: var(--text-secondary);
-    margin-top: 4px;
-}
-
-/* Table format */
-.flights-header {
-    display: flex;
-    padding: 0 24px 12px 24px;
-    color: var(--text-secondary);
-    font-size: 14px;
-    font-weight: 500;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 16px;
-}
-
-.col-route { flex: 2; min-width: 250px; }
-.col-price { flex: 1; text-align: left; }
-.col-average { flex: 1; text-align: left; }
-.col-status { flex: 1; text-align: right; }
-
-.flights-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-/* Flight Card */
-.flight-card {
-    display: flex;
-    align-items: center;
-    padding: 24px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.flight-card:hover {
-    transform: scale(1.01);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-    background: rgba(39, 39, 42, 0.8);
-}
-
-.route-airports {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 6px;
-}
-
-.airport-code {
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-
-.route-line {
-    display: flex;
-    align-items: center;
-    color: var(--text-secondary);
-    gap: 4px;
-    flex: 1;
-    max-width: 60px;
-}
-
-.route-line .line {
-    height: 1px;
-    background-color: var(--text-secondary);
-    flex: 1;
-    opacity: 0.5;
-}
-
-.route-line i {
-    font-size: 12px;
-}
-
-.city-names {
-    color: var(--text-secondary);
-    font-size: 14px;
-}
-
-.price-tag {
-    font-size: 24px;
-    font-weight: 600;
+    font-size: 18px;
 }
 
 .average-price {
-    font-size: 18px;
     color: var(--text-secondary);
-    font-weight: 500;
+    font-size: 15px;
 }
 
-/* Status variants */
-.status-badge {
-    display: inline-block;
+/* Badges (Etiquetas de estado) */
+.badge-estado, .badge-senal {
+    display: inline-flex;
+    align-items: center;
     padding: 6px 12px;
-    border-radius: 20px;
+    border-radius: 4px;
     font-size: 13px;
     font-weight: 600;
-    margin-bottom: 8px;
+    text-transform: capitalize;
 }
 
-.status-good .status-badge {
-    background: var(--success-bg);
-    color: var(--success);
-    border: 1px solid rgba(34, 197, 94, 0.2);
-}
-.status-good .price-tag { color: var(--success); }
-
-.status-typical .status-badge {
-    background: var(--warning-bg);
-    color: var(--warning);
-    border: 1px solid rgba(245, 158, 11, 0.2);
+/* Estados de Precio CSS */
+.badge-estado.barato, .badge-estado.muy-barato {
+    background-color: var(--status-green-bg);
+    color: var(--status-green);
 }
 
-.status-high .status-badge {
-    background: var(--danger-bg);
-    color: var(--danger);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-}
-.status-high .price-tag { color: var(--danger); }
-
-/* Progress bar typical of Google Flights */
-.price-bar-container {
-    width: 100px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-    margin-left: auto;
-    position: relative;
-    overflow: hidden;
+.badge-estado.caro, .badge-estado.muy-caro {
+    background-color: var(--status-red-bg);
+    color: var(--status-red);
 }
 
-.price-indicator {
-    position: absolute;
-    height: 100%;
-    border-radius: 2px;
-    transition: width 1s ease-in-out;
+.badge-estado.normal, .badge-estado.promedio {
+    background-color: var(--status-yellow-bg);
+    color: var(--status-yellow);
 }
 
-.status-good .price-indicator { background: var(--success); width: 20%; }
-.status-typical .price-indicator { background: var(--warning); width: 50%; }
-.status-high .price-indicator { background: var(--danger); width: 90%; }
+/* Señales CSS */
+.badge-senal.comprar {
+    background-color: var(--status-green-bg);
+    color: var(--status-green);
+    border: 1px solid rgba(30, 142, 62, 0.2);
+}
 
-.loading-state {
-    text-align: center;
-    padding: 40px;
+.badge-senal.esperar {
+    background-color: var(--status-yellow-bg);
+    color: var(--status-yellow);
+    border: 1px solid rgba(244, 180, 0, 0.2);
+}
+
+/* Default por si hay otro estado */
+.badge-estado.default, .badge-senal.default {
+    background-color: var(--border-light);
     color: var(--text-secondary);
 }
 
-.loading-state i {
-    font-size: 32px;
+/* Spinner & Estados Vacios/Carga */
+.status-message {
+    padding: 64px 24px !important;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.spinner {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(0,0,0,0.1);
+    border-radius: 50%;
+    border-top-color: var(--primary-blue);
+    animation: spin 1s ease-in-out infinite;
     margin-bottom: 16px;
-    color: var(--accent-blue);
 }
 
-/* Animations */
-.bounce-in {
-    animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    opacity: 0;
-    transform: translateY(20px);
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
-@keyframes bounceIn {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.hidden {
+    display: none !important;
+}
+
+/* Contenedor de Error */
+.error-container {
+    text-align: center;
+    padding: 64px 24px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    margin-top: 24px;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3);
+}
+
+.error-container h3 {
+    margin: 16px 0 8px;
+    font-size: 20px;
+}
+
+.error-container p {
+    color: var(--text-secondary);
+}
+
+.error-container .btn-refresh {
+    margin: 0 auto;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .search-section {
-        flex-direction: column;
+    .flights-table th, .flights-table td {
+        padding: 16px 12px;
     }
-    .btn-primary {
-        width: 100%;
-        justify-content: center;
+    
+    .current-price {
+        font-size: 16px;
     }
-    .flights-header {
-        display: none; /* Hide table header on mobile */
-    }
-    .flight-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-    }
-    .col-price, .col-average, .col-status {
-        text-align: left;
-    }
-    .price-bar-container {
-        margin-left: 0;
+    
+    .header h1 {
+        font-size: 18px;
     }
 }

@@ -3,108 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Track Flights - Premium Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Dashboard de Vuelos | Vuelos en Tiempo Real</title>
+    <!-- Usando Google Fonts (Inter es muy similar a Google Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="logo">
-                <i class="fa-solid fa-plane-departure icon-glow"></i>
-                <span>Aero<span class="highlight">Track</span></span>
+        <!-- Encabezado Estilo Google Flights -->
+        <header class="header">
+            <div class="header-logo">
+                <svg viewBox="0 0 24 24" class="plane-icon" fill="currentColor">
+                    <path d="M22 16v-2l-8.5-5V3.5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5V9L2 14v2l8.5-2.5V19L8 20.5V22l4-1 4 1v-1.5L13.5 19v-5.5L22 16z"></path>
+                </svg>
+                <h1>Vuelos</h1>
             </div>
+            
             <div class="header-actions">
-                <div class="api-status" id="api-status-badge">
-                    <span class="status-dot"></span>
-                    <span id="api-status-text">Conectando...</span>
-                </div>
-                <div class="avatar">
-                    <img src="https://ui-avatars.com/api/?name=User&background=random" alt="Avatar">
-                </div>
+                <button id="btn-refresh" class="btn-refresh">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path>
+                    </svg>
+                    <span>Actualizar precios</span>
+                </button>
             </div>
         </header>
 
-        <!-- Main Content -->
+        <!-- Contenido Principal -->
         <main class="main-content">
-            <!-- Search / Filter Area (Visual) -->
-            <section class="search-section glass-panel">
-                <div class="search-inputs">
-                    <div class="input-group">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <input type="text" placeholder="Origen" value="Cualquier origen" readonly>
-                    </div>
-                    <div class="divider"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
-                    <div class="input-group">
-                        <i class="fa-solid fa-map-location-dot"></i>
-                        <input type="text" placeholder="Destino" value="Cualquier destino" readonly>
-                    </div>
-                </div>
-                <button id="refresh-btn" class="btn-primary">
-                    <i class="fa-solid fa-rotate-right"></i> Actualizar Rutas
-                </button>
-            </section>
+            <div class="hero-section">
+                <h2>Rutas en seguimiento</h2>
+                <p>Monitoreo inteligente de precios basado en el mercado aéreo</p>
+            </div>
 
-            <!-- Results Section -->
-            <section class="results-section">
-                <div class="section-header">
-                    <h2>Rutas Monitoreadas</h2>
-                    <p>Precios obtenidos en tiempo real de tu API.</p>
-                </div>
+            <!-- Tabla de Vuelos -->
+            <div class="table-container">
+                <table class="flights-table" id="flights-table">
+                    <thead>
+                        <tr>
+                            <th>Ruta</th>
+                            <th>Precio actual</th>
+                            <th>Precio promedio</th>
+                            <th>Estado</th>
+                            <th>Señal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- El estado inicial de carga -->
+                        <tr id="loading-row">
+                            <td colspan="5" class="status-message">
+                                <div class="spinner"></div>
+                                <span>Cargando vuelos...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-                <div class="flights-header">
-                    <div class="col-route">Ruta</div>
-                    <div class="col-price">Precio Actual</div>
-                    <div class="col-average">Precio Promedio</div>
-                    <div class="col-status">Estado</div>
-                </div>
+            <!-- Contenedor para mostrar mensajes de Error -->
+            <div id="error-container" class="error-container hidden">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="#d93025">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                </svg>
+                <h3 id="error-title">No se pudieron cargar los precios</h3>
+                <p id="error-message">Hubo un problema al conectar con el servidor.</p>
+                <button id="btn-retry" class="btn-refresh" style="margin-top: 16px;">Reintentar</button>
+            </div>
 
-                <div id="flights-container" class="flights-list">
-                    <!-- Los vuelos se generarán aquí mediante JS -->
-                    <div class="loading-state">
-                        <i class="fa-solid fa-circle-notch fa-spin"></i>
-                        <p>Cargando información de rutas...</p>
-                    </div>
-                </div>
-            </section>
         </main>
     </div>
 
-    <!-- Template for a flight card -->
-    <template id="flight-card-template">
-        <div class="flight-card glass-panel bounce-in">
-            <div class="col-route">
-                <div class="route-airports">
-                    <span class="airport-code origin">XXX</span>
-                    <div class="route-line">
-                        <div class="line"></div>
-                        <i class="fa-solid fa-plane"></i>
-                        <div class="line"></div>
-                    </div>
-                    <span class="airport-code destination">YYY</span>
-                </div>
-                <span class="route-name city-names">Ciudad A → Ciudad B</span>
-            </div>
-            
-            <div class="col-price">
-                <span class="current-price price-tag">$0</span>
-            </div>
-            
-            <div class="col-average">
-                <span class="average-price">$0</span>
-            </div>
-            
-            <div class="col-status">
-                <div class="status-badge">
-                    <span class="status-text">Normal</span>
-                </div>
-                <div class="price-bar-container">
-                    <div class="price-indicator"></div>
-                </div>
-            </div>
-        </div>
+    <!-- Template base para filas (oculto en HTML) -->
+    <template id="row-template">
+        <tr class="flight-row">
+            <td class="col-ruta">
+                <div class="ruta-badge"></div>
+            </td>
+            <td class="col-precio current-price"></td>
+            <td class="col-promedio average-price"></td>
+            <td class="col-estado">
+                <span class="badge-estado"></span>
+            </td>
+            <td class="col-senal">
+                <span class="badge-senal"></span>
+            </td>
+        </tr>
     </template>
 
     <script src="app.js"></script>
