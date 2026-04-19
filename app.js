@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // URL Única del Worker
+    // URL del Worker
     const API_URL = 'https://raspy-field-9186.sebaauto232.workers.dev';
 
     // Elementos del DOM
@@ -15,14 +15,31 @@ document.addEventListener('DOMContentLoaded', () => {
     let fetchTimestamp = null;
     let timerInterval = null;
 
-    // Formatear Moneda a pesos chilenos / genérico
+    // Formatear Moneda en dólares
     const formatCurrency = (value) => {
         if (!value && value !== 0) return '-';
-        return new Intl.NumberFormat('es-AR', { 
+        return new Intl.NumberFormat('en-US', { 
             style: 'currency', 
-            currency: 'ARS',
+            currency: 'USD',
             maximumFractionDigits: 0
         }).format(value);
+    };
+
+    // Generar URL de Google Flights para la ruta
+    const buildFlightUrl = (ruta) => {
+        if (!ruta) return '#';
+        const [origen, destino] = ruta.split('-');
+        if (!origen || !destino) return '#';
+
+        // Calcular fechas igual que el Worker: hoy +30 ida, +37 vuelta
+        const fechaIda = new Date();
+        fechaIda.setDate(fechaIda.getDate() + 30);
+        const fechaVuelta = new Date(fechaIda);
+        fechaVuelta.setDate(fechaVuelta.getDate() + 7);
+
+        const fmt = (d) => d.toISOString().split('T')[0];
+        // Formato Google Flights deep link
+        return `https://www.google.com/travel/flights?hl=es&curr=USD#flt=${origen}.${destino}.${fmt(fechaIda)}*${destino}.${origen}.${fmt(fechaVuelta)};c:USD;e:1;sd:1;t:f`;
     };
 
     // Interpretar Estado (Barato, Caro, Normal)
@@ -60,13 +77,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Renderizar una fila
+    // Renderizar una fila (clickeable → Google Flights)
     const createFlightRow = (flight) => {
         const clone = rowTemplate.content.cloneNode(true);
         const row = clone.querySelector('.flight-row');
+
+        // Hacer la fila clickeable
+        const url = buildFlightUrl(flight.ruta);
+        row.style.cursor = 'pointer';
+        row.title = 'Ver en Google Flights';
+        row.addEventListener('click', () => window.open(url, '_blank'));
         
         // Asignación principal
         clone.querySelector('.ruta-badge').textContent = flight.ruta || 'N/A';
+
+        // Tipo de vuelo (ida / ida y vuelta)
+        const tipoStr = flight.tipo || 'Solo ida';
+        const tipoBadge = clone.querySelector('.badge-tipo');
+        tipoBadge.textContent = tipoStr;
+        if (tipoStr.toLowerCase().includes('vuelta')) {
+            tipoBadge.classList.add('ida-vuelta');
+        } else {
+            tipoBadge.classList.add('ida');
+        }
 
         // Manejo "error: true" individual de la ruta
         if (flight.error === true || String(flight.estado).toLowerCase().includes('error')) {
@@ -122,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tableBody.innerHTML = `
             <tr id="loading-row">
-                <td colspan="5" class="status-message">
+                <td colspan="6" class="status-message">
                     <div class="spinner"></div>
                     <div>Obteniendo rutas desde Cloudflare Worker...</div>
                 </td>
@@ -130,26 +163,25 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         try {
-            // Unico fetch
             const response = await fetch(API_URL);
 
             if (!response.ok) {
-                throw new Error(`Cloudflare Worker devolvió código ${response.status}`);
+                throw new Error(`Worker devolvió código ${response.status}`);
             }
 
             const data = await response.json();
 
-            // Limpiar tabla (quitar spinner)
+            // Limpiar tabla
             tableBody.innerHTML = '';
 
-            // Validar arreglo vacío
             if (!Array.isArray(data) || data.length === 0) {
                 tableBody.innerHTML = `
                 <tr>
-                    <td colspan="5" class="status-message">Sin datos de rutas disponibles desde el worker.</td>
+                    <td colspan="6" class="status-message">Sin datos de rutas disponibles desde el worker.</td>
                 </tr>`;
             } else {
-                // Mapear rutas
+                // Ordenar por ruta
+                data.sort((a, b) => (a.ruta || '').localeCompare(b.ruta || ''));
                 data.forEach(flight => {
                     tableBody.appendChild(createFlightRow(flight));
                 });

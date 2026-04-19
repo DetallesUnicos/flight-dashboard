@@ -204,7 +204,15 @@ body {
 }
 
 .flight-row:hover {
-    background-color: rgba(255, 255, 255, 0.03);
+    background-color: rgba(59, 130, 246, 0.06);
+    box-shadow: inset 3px 0 0 var(--primary-blue);
+}
+
+.flight-row:hover .ruta-badge::after {
+    content: ' ↗';
+    font-size: 12px;
+    opacity: 0.5;
+    color: var(--primary-blue);
 }
 
 /* Estilo fila error */
@@ -225,6 +233,42 @@ body {
     font-weight: 600;
     color: var(--text-primary);
     font-size: 15px;
+}
+
+/* Badge Tipo de Vuelo */
+.badge-tipo {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-tipo::before {
+    font-size: 13px;
+}
+
+.badge-tipo.ida {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: #93bbfd;
+    border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.badge-tipo.ida::before {
+    content: '→';
+}
+
+.badge-tipo.ida-vuelta {
+    background-color: rgba(139, 92, 246, 0.15);
+    color: #c4b0fa;
+    border: 1px solid rgba(139, 92, 246, 0.25);
+}
+
+.badge-tipo.ida-vuelta::before {
+    content: '⇄';
 }
 
 .current-price {

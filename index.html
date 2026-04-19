@@ -36,8 +36,8 @@
         <!-- Contenido Principal -->
         <main class="main-content">
             <div class="hero-section">
-                <h2>Rutas Domésticas Argentina</h2>
-                <p>Buenos Aires → Patagonia · Precios en tiempo real desde Cloudflare Worker.</p>
+                <h2>Patagonia · Ida y Vuelta</h2>
+                <p>Buenos Aires (AEP/EZE) → El Calafate &amp; Ushuaia · Precios en tiempo real.</p>
                 <div class="cron-notice">
                     <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
                         <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"></path>
@@ -52,6 +52,7 @@
                     <thead>
                         <tr>
                             <th>Ruta</th>
+                            <th>Tipo</th>
                             <th>Mejor Precio</th>
                             <th>Precio normal</th>
                             <th>Estado</th>
@@ -61,7 +62,7 @@
                     <tbody id="table-body">
                         <!-- El estado inicial de carga -->
                         <tr id="loading-row">
-                            <td colspan="5" class="status-message">
+                            <td colspan="6" class="status-message">
                                 <div class="spinner"></div>
                                 <span>Cargando conectividad...</span>
                             </td>
@@ -88,6 +89,9 @@
         <tr class="flight-row">
             <td class="col-ruta">
                 <div class="ruta-badge"></div>
+            </td>
+            <td class="col-tipo">
+                <span class="badge-tipo"></span>
             </td>
             <td class="col-precio current-price"></td>
             <td class="col-promedio average-price"></td>
