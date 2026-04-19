@@ -1,26 +1,26 @@
 :root {
-    --bg-body: #f8f9fa;
-    --bg-surface: #ffffff;
+    --bg-body: #0b1120; /* Deep navy */
+    --bg-surface: rgba(15, 23, 42, 0.65); /* Glassmorphic navy slate */
     
-    --text-primary: #202124;
-    --text-secondary: #5f6368;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
     
-    --border-light: #dadce0;
+    --border-light: rgba(255, 255, 255, 0.1);
     
-    --primary-blue: #1a73e8;
-    --primary-blue-hover: #1b66c9;
+    --primary-blue: #3b82f6; /* Modern bright blue */
+    --primary-blue-hover: #60a5fa;
     
-    --status-green: #1e8e3e;
-    --status-green-bg: #e6f4ea;
+    --status-green: #34d399;
+    --status-green-bg: rgba(16, 185, 129, 0.2);
     
-    --status-red: #d93025;
-    --status-red-bg: #fce8e6;
+    --status-red: #f87171;
+    --status-red-bg: rgba(239, 68, 68, 0.2);
     
-    --status-yellow: #f4b400;
-    --status-yellow-bg: #fef7e0;
+    --status-yellow: #facc15;
+    --status-yellow-bg: rgba(234, 179, 8, 0.2);
     
-    --status-gray: #80868b;
-    --status-gray-bg: #f1f3f4;
+    --status-gray: #94a3b8;
+    --status-gray-bg: rgba(148, 163, 184, 0.2);
     
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
@@ -49,6 +49,8 @@ body {
 /* Header */
 .header {
     background-color: var(--bg-surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     height: 64px;
     display: flex;
     align-items: center;
@@ -150,24 +152,27 @@ body {
     margin-top: 12px;
     padding: 6px 12px;
     background-color: var(--status-yellow-bg);
-    color: #b07d00;
+    color: var(--status-yellow);
     border-radius: 16px;
     font-size: 13px;
     font-weight: 500;
+    border: 1px solid rgba(234, 179, 8, 0.3);
 }
 
 .cron-notice strong {
     font-weight: 700;
-    color: #8c6400;
+    color: #fde68a;
 }
 
 /* Tabla Estilo Tarjeta */
 .table-container {
     background: var(--bg-surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border-light);
-    border-radius: 8px;
+    border-radius: 12px;
     overflow-x: auto;
-    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .flights-table {
@@ -199,7 +204,7 @@ body {
 }
 
 .flight-row:hover {
-    background-color: #f8f9fa;
+    background-color: rgba(255, 255, 255, 0.03);
 }
 
 /* Estilo fila error */
@@ -207,7 +212,7 @@ body {
     background-color: var(--status-red-bg);
 }
 .flight-row.is-error:hover {
-    background-color: #fbd6d3;
+    background-color: rgba(239, 68, 68, 0.3);
 }
 .flight-row.is-error .ruta-badge,
 .flight-row.is-error .current-price,
