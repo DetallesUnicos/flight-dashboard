@@ -1,5 +1,4 @@
 :root {
-    /* Paleta de colores inspirada en Material Design / Google Flights */
     --bg-body: #f8f9fa;
     --bg-surface: #ffffff;
     
@@ -19,6 +18,9 @@
     
     --status-yellow: #f4b400;
     --status-yellow-bg: #fef7e0;
+    
+    --status-gray: #80868b;
+    --status-gray-bg: #f1f3f4;
     
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
@@ -66,10 +68,29 @@ body {
 }
 
 .header-logo h1 {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 500;
     color: var(--text-primary);
     letter-spacing: -0.5px;
+}
+
+.header-logo svg {
+    width: 24px;
+    height: 24px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.update-info {
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
 /* Botones */
@@ -81,8 +102,8 @@ body {
     color: #fff;
     border: none;
     border-radius: 24px;
-    padding: 0 24px;
-    height: 40px;
+    padding: 0 20px;
+    height: 36px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -111,7 +132,7 @@ body {
 }
 
 .hero-section h2 {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 500;
     margin-bottom: 8px;
     letter-spacing: -0.5px;
@@ -119,7 +140,7 @@ body {
 
 .hero-section p {
     color: var(--text-secondary);
-    font-size: 16px;
+    font-size: 15px;
 }
 
 /* Tabla Estilo Tarjeta */
@@ -140,7 +161,7 @@ body {
 
 .flights-table th {
     color: var(--text-secondary);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     padding: 16px 24px;
     border-bottom: 1px solid var(--border-light);
@@ -152,7 +173,7 @@ body {
     padding: 16px 24px;
     vertical-align: middle;
     border-bottom: 1px solid var(--border-light);
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .flights-table tr:last-child td {
@@ -163,48 +184,75 @@ body {
     background-color: #f8f9fa;
 }
 
+/* Estilo fila error */
+.flight-row.is-error {
+    background-color: var(--status-red-bg);
+}
+.flight-row.is-error:hover {
+    background-color: #fbd6d3;
+}
+.flight-row.is-error .ruta-badge,
+.flight-row.is-error .current-price,
+.flight-row.is-error .average-price {
+    color: var(--status-red);
+}
+
 /* Elementos de la fila */
 .col-ruta .ruta-badge {
     font-weight: 600;
     color: var(--text-primary);
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .current-price {
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .average-price {
     color: var(--text-secondary);
-    font-size: 15px;
+    font-size: 14px;
+}
+
+.price-date {
+    display: block;
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    opacity: 0.7;
 }
 
 /* Badges (Etiquetas de estado) */
 .badge-estado, .badge-senal {
     display: inline-flex;
     align-items: center;
-    padding: 6px 12px;
+    padding: 4px 10px;
     border-radius: 4px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     text-transform: capitalize;
 }
 
 /* Estados de Precio CSS */
-.badge-estado.barato, .badge-estado.muy-barato {
+.badge-estado.barato {
     background-color: var(--status-green-bg);
     color: var(--status-green);
 }
 
-.badge-estado.caro, .badge-estado.muy-caro {
+.badge-estado.caro {
     background-color: var(--status-red-bg);
     color: var(--status-red);
 }
 
-.badge-estado.normal, .badge-estado.promedio {
+.badge-estado.normal {
     background-color: var(--status-yellow-bg);
     color: var(--status-yellow);
+}
+
+.badge-estado.error {
+    background-color: var(--status-gray-bg);
+    color: var(--status-gray);
+    border: 1px solid var(--border-light);
 }
 
 /* Señales CSS */
@@ -214,13 +262,25 @@ body {
     border: 1px solid rgba(30, 142, 62, 0.2);
 }
 
+/* "posible compra" → mismo color que comprar pero más suave */
+.badge-senal.posible-compra {
+    background-color: #f0faf4;
+    color: #34a853;
+    border: 1px solid rgba(52, 168, 83, 0.2);
+}
+
 .badge-senal.esperar {
     background-color: var(--status-yellow-bg);
     color: var(--status-yellow);
     border: 1px solid rgba(244, 180, 0, 0.2);
 }
 
-/* Default por si hay otro estado */
+.badge-senal.error {
+    background-color: var(--status-gray-bg);
+    color: var(--status-gray);
+}
+
+/* Default */
 .badge-estado.default, .badge-senal.default {
     background-color: var(--border-light);
     color: var(--text-secondary);
@@ -235,13 +295,13 @@ body {
 
 .spinner {
     display: inline-block;
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
     border: 3px solid rgba(0,0,0,0.1);
     border-radius: 50%;
     border-top-color: var(--primary-blue);
     animation: spin 1s ease-in-out infinite;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 @keyframes spin {
@@ -252,7 +312,7 @@ body {
     display: none !important;
 }
 
-/* Contenedor de Error */
+/* Contenedor de Error Global */
 .error-container {
     text-align: center;
     padding: 64px 24px;
@@ -260,12 +320,11 @@ body {
     border: 1px solid var(--border-light);
     border-radius: 8px;
     margin-top: 24px;
-    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3);
 }
 
 .error-container h3 {
     margin: 16px 0 8px;
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .error-container p {
@@ -278,15 +337,19 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        height: auto;
+        padding: 16px;
+        gap: 16px;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
     .flights-table th, .flights-table td {
-        padding: 16px 12px;
-    }
-    
-    .current-price {
-        font-size: 16px;
-    }
-    
-    .header h1 {
-        font-size: 18px;
+        padding: 12px;
     }
 }
