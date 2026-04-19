@@ -143,6 +143,24 @@ body {
     font-size: 15px;
 }
 
+.cron-notice {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 6px 12px;
+    background-color: var(--status-yellow-bg);
+    color: #b07d00;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.cron-notice strong {
+    font-weight: 700;
+    color: #8c6400;
+}
+
 /* Tabla Estilo Tarjeta */
 .table-container {
     background: var(--bg-surface);

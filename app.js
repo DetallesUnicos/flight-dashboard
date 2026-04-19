@@ -194,4 +194,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cargar apenas se abre la página
     fetchFlights();
+
+    // Contador del Bot (Cron a las 08:00 UTC = 05:00 ARG)
+    const updateCountdown = () => {
+        const cronEl = document.getElementById('cron-countdown');
+        if (!cronEl) return;
+        
+        const now = new Date();
+        const nextCron = new Date();
+        nextCron.setUTCHours(8, 0, 0, 0); // 08:00 UTC
+        
+        // Si ya pasaron las 08:00 UTC de hoy, el próximo es mañana
+        if (now > nextCron) {
+            nextCron.setUTCDate(nextCron.getUTCDate() + 1);
+        }
+        
+        const diff = nextCron - now;
+        const h = Math.floor(diff / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        cronEl.textContent = `${String(h).padStart(2, '0')}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
+    };
+    
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
 });
