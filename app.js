@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fechaVuelta.setDate(fechaVuelta.getDate() + 7);
 
         const fmt = (d) => d.toISOString().split('T')[0];
-        // Google Flights deep link - t:r = round trip, sin filtro de escalas
-        return `https://www.google.com/travel/flights?hl=es&curr=USD#flt=${origen}.${destino}.${fmt(fechaIda)}*${destino}.${origen}.${fmt(fechaVuelta)};c:USD;sd:1;t:r`;
+        // Kayak deep link - URL simple y confiable
+        return `https://www.kayak.com.ar/flights/${origen}-${destino}/${fmt(fechaIda)}/${fmt(fechaVuelta)}?sort=bestflight_a`;
     };
 
     // Interpretar Estado (Barato, Caro, Normal)
